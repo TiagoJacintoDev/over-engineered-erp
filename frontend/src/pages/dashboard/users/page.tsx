@@ -20,7 +20,7 @@ export default function UsersList() {
   const { data, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const response = await axiosClient.get<User[]>(`company/${companyId}/users`);
+      const response = await axiosClient.get<User[]>(`company/${companyId}/user`);
 
       return response.data;
     },
