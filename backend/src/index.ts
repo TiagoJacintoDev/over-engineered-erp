@@ -1,7 +1,9 @@
-import express from 'express';
-import { prisma } from './prisma';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
+import express from 'express';
+import { z } from 'zod';
+
+import { prisma } from './prisma';
 
 const app = express();
 
@@ -10,13 +12,16 @@ app.use(cors());
 
 app.post('/api/signup', async (req, res) => {
   try {
-    const data = {
-      country: req.body.country,
-      email: req.body.email,
-      name: req.body.firstName + ' ' + req.body.lastName,
-      password: req.body.password,
-      companyName: req.body.companyName,
-    };
+    const data = z
+      .object({
+        country: z.string(),
+        email: z.string().email(),
+        firstName: z.string(),
+        lastName: z.string(),
+        password: z.string(),
+        companyName: z.string(),
+      })
+      .parse(req.body);
 
     for (const value of Object.values(data)) {
       if (!value) {
@@ -36,7 +41,7 @@ app.post('/api/signup', async (req, res) => {
       data: {
         country: data.country,
         email: data.email,
-        name: data.name,
+        name: `${data.firstName} ${data.lastName}`,
         password: await bcrypt.hash(data.password, 10),
         companies: {
           create: {
@@ -54,10 +59,12 @@ app.post('/api/signup', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   try {
-    const data = {
-      email: req.body.email,
-      password: req.body.password,
-    };
+    const data = z
+      .object({
+        email: z.string().email(),
+        password: z.string(),
+      })
+      .parse(req.body);
 
     for (const value of Object.keys(data)) {
       if (!value) {
