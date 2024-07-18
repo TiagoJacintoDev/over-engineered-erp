@@ -21,7 +21,7 @@ export default function EditUser() {
   const { data, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const response = await axiosClient.get<User>(`company/${companyId}/user/${userId}`);
+      const response = await axiosClient.get<User>(`companies/${companyId}/users/${userId}`);
 
       return response.data;
     },
@@ -53,7 +53,7 @@ function EditUserForm({
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: EditUserFormValues) => {
       const response = await axiosClient.put<{ id: string }>(
-        `/company/${companyId}/user/${userId}`,
+        `/companies/${companyId}/users/${userId}`,
         data,
       );
 

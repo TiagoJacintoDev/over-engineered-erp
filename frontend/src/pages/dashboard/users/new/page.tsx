@@ -19,7 +19,10 @@ export default function CreateUser() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: CreateUserFormValues) => {
-      const response = await axiosClient.post<{ id: string }>(`/company/${companyId}/user`, data);
+      const response = await axiosClient.post<{ id: string }>(
+        `/companies/${companyId}/users`,
+        data,
+      );
 
       navigateTo(`/dashboard/users/${response.data.id}?companyId=${companyId}`);
     },

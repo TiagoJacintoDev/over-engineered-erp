@@ -20,7 +20,7 @@ export default function UsersList() {
   const { data, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const response = await axiosClient.get<User[]>(`company/${companyId}/user`);
+      const response = await axiosClient.get<User[]>(`companies/${companyId}/users`);
 
       return response.data;
     },
@@ -35,7 +35,7 @@ export default function UsersList() {
 function UsersTable({ companyId, users }: { companyId: string; users: User[] }) {
   const { mutate: deleteUser, isPending: isDeletingUser } = useMutation({
     mutationFn: async (userId: string) => {
-      await axiosClient.delete(`company/${companyId}/user/${userId}`);
+      await axiosClient.delete(`companies/${companyId}/users/${userId}`);
     },
     onSuccess: () => {
       return queryClient.invalidateQueries({
