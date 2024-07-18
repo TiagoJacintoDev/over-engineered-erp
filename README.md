@@ -25,4 +25,4 @@ This project is a roadmap on how to over-engineer a software application.
    - Styling
      - Prettier
      - Editor Config
-   - [Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/52613c23f2f5ef7cdca5c46241a504ac23951f37)
+   - [From Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/52613c23f2f5ef7cdca5c46241a504ac23951f37) | [To Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/af5dbb9f0186ce4032bda55c2acb20e5a09715bc)
