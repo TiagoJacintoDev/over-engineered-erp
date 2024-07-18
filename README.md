@@ -14,3 +14,5 @@ This project is a roadmap on how to over-engineer a software application.
      - React as a Framework
    - Backend
      - Transaction Script
+   - Repository Distribution
+     - PNPM Monorepo w/o shared code
