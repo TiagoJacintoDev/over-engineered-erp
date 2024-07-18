@@ -1,6 +1,6 @@
 This project is a roadmap on how to over-engineer a software application.
 
-1. Workin? Good
+1. Working? Good
    - Folder Structure
      - Infrastructure-Driven
      - Framework-Driven
