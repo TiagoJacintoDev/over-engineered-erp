@@ -1,5 +1,9 @@
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { type AxiosError } from 'axios';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+
+import { axiosClient } from '../../shared/clients/axios';
 
 type LoginFormValues = {
   email: string;
@@ -8,48 +12,45 @@ type LoginFormValues = {
 
 export default function Login() {
   const navigateTo = useNavigate();
-  const { register, handleSubmit } = useForm({
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data: LoginFormValues) => {
+      const response = await axiosClient.post<{ userId: string }>('/login', data);
+
+      navigateTo(`/choose-company?userId=${response.data.userId}`);
+    },
+    onError: (error: AxiosError<{ error: string }>) => {
+      alert(error.response?.data.error);
+    },
+  });
+
+  const { register, handleSubmit } = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
       password: '',
     },
+    disabled: isPending,
   });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
-    const response = await fetch('http://localhost:3000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) throw new Error('Invalid credentials');
-
-    const { userId } = await response.json();
-
-    navigateTo(`/choose-company?userId=${userId}`);
-  };
-
   return (
-    <div className='py-6 px-36'>
-      <h1 className='text-xl'>Login</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4 mt-5'>
+    <div className="py-6 px-36">
+      <h1 className="text-xl">Login</h1>
+      <form onSubmit={handleSubmit((data) => mutate(data))} className="flex flex-col gap-4 mt-5">
         <label>Email</label>
         <input
-          type='email'
-          className='border border-black rounded-lg h-9 pl-2.5'
+          type="email"
+          className="border border-black rounded-lg h-9 pl-2.5"
           {...register('email')}
         />
 
         <label>Password</label>
         <input
-          type='password'
-          className='border border-black rounded-lg h-9 pl-2.5'
+          type="password"
+          className="border border-black rounded-lg h-9 pl-2.5"
           {...register('password')}
         />
 
-        <button type='submit' className='bg-black text-white h-11 rounded-lg w-64 self-center mt-3'>
+        <button type="submit" className="bg-black text-white h-11 rounded-lg w-64 self-center mt-3">
           Login
         </button>
       </form>
