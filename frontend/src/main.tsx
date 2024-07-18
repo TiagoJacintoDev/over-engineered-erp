@@ -6,6 +6,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import ChooseCompany from './pages/choose-company/page.tsx';
 import Dashboard from './pages/dashboard/page.tsx';
+import EditUser from './pages/dashboard/users/[userId]/page.tsx';
+import CreateUser from './pages/dashboard/users/new/page.tsx';
+import UsersList from './pages/dashboard/users/page.tsx';
 import Login from './pages/login/page.tsx';
 import Signup from './pages/signup/page.tsx';
 
@@ -24,7 +27,29 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: <Dashboard />,
+    children: [
+      {
+        path: '',
+        element: <Dashboard />,
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            path: '',
+            element: <UsersList />,
+          },
+          {
+            path: 'new',
+            element: <CreateUser />,
+          },
+          {
+            path: ':userId',
+            element: <EditUser />,
+          },
+        ],
+      },
+    ],
   },
 ]);
 
