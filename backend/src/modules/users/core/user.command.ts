@@ -3,4 +3,6 @@ export type UserCommand = {
   firstName: string;
   lastName: string;
   companyId: string;
+  password?: string;
+  country?: string;
 };

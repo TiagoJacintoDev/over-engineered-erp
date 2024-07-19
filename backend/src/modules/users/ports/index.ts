@@ -1,11 +1,8 @@
 import { prisma } from '../../../shared/infra/database/prisma';
-import { PrismaUserRepository } from '../adapters/PrismaUserRepository';
-import { type UserRepository } from './user.repository';
+import { PrismaUserRepository } from '../adapters/outgoing/PrismaUserRepository';
+import { UserService } from './incoming/user.service';
 
-interface UserPorts {
-  repository: UserRepository;
-}
+const userRepository = new PrismaUserRepository(prisma);
+const userService = new UserService(userRepository);
 
-export const userPorts: UserPorts = {
-  repository: new PrismaUserRepository(prisma),
-};
+export { userRepository, userService };

@@ -1,5 +1,5 @@
-import { type UserRepository } from './ports/user.repository';
-import { type UserCommand } from './user.command';
+import { type UserCommand } from '../../core/user.command';
+import { type UserRepository } from '../outgoing/user.repository';
 
 export class UserService {
   constructor(private readonly repository: UserRepository) {}
@@ -8,8 +8,16 @@ export class UserService {
     return this.repository.getMany(companyId);
   }
 
-  async getUser(companyId: string, userId: string) {
-    const user = await this.repository.find(companyId, userId);
+  async getUserByEmail(companyId: string, email: string) {
+    const user = await this.repository.findByEmail(companyId, email);
+
+    if (!user) throw new Error('User not found');
+
+    return user;
+  }
+
+  async getUserById(companyId: string, userId: string) {
+    const user = await this.repository.findById(companyId, userId);
 
     if (!user) throw new Error('User not found');
 
@@ -33,7 +41,7 @@ export class UserService {
   }
 
   async deleteUser(companyId: string, userId: string) {
-    const user = await this.repository.find(companyId, userId);
+    const user = await this.repository.findById(companyId, userId);
 
     if (!user) throw new Error('User not found');
 

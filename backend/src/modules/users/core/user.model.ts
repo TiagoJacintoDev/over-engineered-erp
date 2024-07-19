@@ -1,6 +1,6 @@
-import { type Maybe } from '../../shared/core/Maybe';
-import { type UserStatus } from './core/user-status';
-import { type UserType } from './core/user-type';
+import { type Maybe } from '../../../shared/core/Maybe';
+import { type UserStatus } from './user-status';
+import { type UserType } from './user-type';
 
 export type UserModel = {
   id: string;

@@ -1,21 +1,8 @@
 import type express from 'express';
 import { z } from 'zod';
 
-import { type UserService } from './user.service';
-
-abstract class Controller {
-  protected async execute(
-    req: express.Request,
-    res: express.Response,
-    cb: (req: express.Request, res: express.Response) => Promise<unknown>,
-  ) {
-    try {
-      await cb(req, res);
-    } catch (error) {
-      res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
-    }
-  }
-}
+import { Controller } from '../../../../shared/infra/http/models/Controller';
+import { type UserService } from '../../ports/incoming/user.service';
 
 export class UserController extends Controller {
   constructor(private readonly service: UserService) {
@@ -40,9 +27,9 @@ export class UserController extends Controller {
     });
   }
 
-  async getUser(req: express.Request, res: express.Response) {
+  async getUserById(req: express.Request, res: express.Response) {
     await this.execute(req, res, async (req, res) => {
-      const user = await this.service.getUser(req.params.companyId, req.params.userId);
+      const user = await this.service.getUserById(req.params.companyId, req.params.userId);
 
       res.status(200).json({
         id: user.id,
@@ -96,5 +83,17 @@ export class UserController extends Controller {
 
       res.status(204).send();
     });
+  }
+
+  protected setupRoutes(): void {
+    this.router.get('', (req, res) => this.getUsers(req, res));
+
+    this.router.get('/:userId', (req, res) => this.getUserById(req, res));
+
+    this.router.post('', (req, res) => this.createUser(req, res));
+
+    this.router.put('/:userId', (req, res) => this.updateUser(req, res));
+
+    this.router.delete('/:userId', (req, res) => this.deleteUser(req, res));
   }
 }

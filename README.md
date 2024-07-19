@@ -39,6 +39,27 @@ This project is a roadmap on how to over-engineer a software application.
      - [From Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/2b0e08377f318d524f1445d1698808901b7afbed) | [To Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/c8d7cb21110c1d8bcc93c29d83ad0b577e3ddbd3)
 5. Auth
    - Token storage
+     - Available options
+       - Web Storage
+         - Advantages
+           - Limited to the specific domain
+         - Disadvantages
+           - Every request needs to send the authorization header token
+         - Open to
+           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
+       - Cookies
+         - Advantages
+           - Automatically sent to the server in each request (no need to define authorization header)
+         - Open to
+           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
+           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
+       - In Memory
+         - Advantages
+           - There is no way to access the token in the browser
+         - Disadvantages
+           - Every request needs to send the authorization header token
+         - Open to
+           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
    - JWT
    - OAuth
 6. Each user should have its own data

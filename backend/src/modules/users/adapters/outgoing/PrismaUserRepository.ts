@@ -1,11 +1,11 @@
 import { type User, type PrismaClient } from '@prisma/client';
 
-import { type AsyncMaybe } from '../../../shared/core/Maybe';
-import { type UserStatus } from '../core/user-status';
-import { type UserType } from '../core/user-type';
-import { type UserRepository } from '../ports/user.repository';
-import { type UserCommand } from '../user.command';
-import { type UserModel } from '../user.model';
+import { type AsyncMaybe } from '../../../../shared/core/Maybe';
+import { type UserStatus } from '../../core/user-status';
+import { type UserType } from '../../core/user-type';
+import { type UserCommand } from '../../core/user.command';
+import { type UserModel } from '../../core/user.model';
+import { type UserRepository } from '../../ports/outgoing/user.repository';
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly client: PrismaClient) {}
@@ -21,10 +21,10 @@ export class PrismaUserRepository implements UserRepository {
       },
     });
 
-    return users.map(this.prismaToModel);
+    return users.map(PrismaUserRepository.prismaToModel);
   }
 
-  async find(companyId: string, userId: string): AsyncMaybe<UserModel> {
+  async findById(companyId: string, userId: string): AsyncMaybe<UserModel> {
     const user = await this.client.user.findFirst({
       where: {
         id: userId,
@@ -40,7 +40,7 @@ export class PrismaUserRepository implements UserRepository {
       return null;
     }
 
-    return this.prismaToModel(user);
+    return PrismaUserRepository.prismaToModel(user);
   }
 
   async findByEmail(companyId: string, email: string): AsyncMaybe<UserModel> {
@@ -59,7 +59,7 @@ export class PrismaUserRepository implements UserRepository {
       return null;
     }
 
-    return this.prismaToModel(user);
+    return PrismaUserRepository.prismaToModel(user);
   }
 
   async create(payload: UserCommand): Promise<void> {
@@ -73,6 +73,8 @@ export class PrismaUserRepository implements UserRepository {
             id: payload.companyId,
           },
         },
+        password: payload.password,
+        country: payload.country,
       },
     });
   }
@@ -91,6 +93,8 @@ export class PrismaUserRepository implements UserRepository {
         firstName: command.firstName,
         lastName: command.lastName,
         email: command.email,
+        password: command.password,
+        country: command.country,
       },
     });
   }
@@ -108,7 +112,7 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  private prismaToModel(this: void, prisma: User): UserModel {
+  public static prismaToModel(this: void, prisma: User): UserModel {
     return {
       ...prisma,
       status: prisma.status as UserStatus,
