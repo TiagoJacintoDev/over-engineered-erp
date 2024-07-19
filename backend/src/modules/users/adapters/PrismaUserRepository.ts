@@ -2,11 +2,12 @@ import { type PrismaClient, type User } from '@prisma/client';
 
 import { type AsyncMaybe } from '../../../shared/core/Maybe';
 import { type UserRepository } from '../ports/user.repository';
+import { type UserCommand } from '../user.command';
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly client: PrismaClient) {}
 
-  getMany(companyId: string): Promise<User[]> {
+  async getMany(companyId: string): Promise<User[]> {
     return this.client.user.findMany({
       where: {
         companies: {
@@ -44,12 +45,7 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async create(payload: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    companyId: string;
-  }): Promise<void> {
+  async create(payload: UserCommand): Promise<void> {
     await this.client.user.create({
       data: {
         email: payload.email,
@@ -58,6 +54,37 @@ export class PrismaUserRepository implements UserRepository {
         companies: {
           connect: {
             id: payload.companyId,
+          },
+        },
+      },
+    });
+  }
+
+  async update(command: UserCommand): Promise<void> {
+    await this.client.user.update({
+      where: {
+        email: command.email,
+        companies: {
+          some: {
+            id: command.companyId,
+          },
+        },
+      },
+      data: {
+        firstName: command.firstName,
+        lastName: command.lastName,
+        email: command.email,
+      },
+    });
+  }
+
+  async delete(companyId: string, userId: string): Promise<void> {
+    await this.client.user.delete({
+      where: {
+        id: userId,
+        companies: {
+          some: {
+            id: companyId,
           },
         },
       },
