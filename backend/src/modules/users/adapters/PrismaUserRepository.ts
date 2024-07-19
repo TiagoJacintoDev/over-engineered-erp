@@ -1,14 +1,17 @@
-import { type PrismaClient, type User } from '@prisma/client';
+import { type User, type PrismaClient } from '@prisma/client';
 
 import { type AsyncMaybe } from '../../../shared/core/Maybe';
+import { type UserStatus } from '../core/user-status';
+import { type UserType } from '../core/user-type';
 import { type UserRepository } from '../ports/user.repository';
 import { type UserCommand } from '../user.command';
+import { type UserModel } from '../user.model';
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly client: PrismaClient) {}
 
-  async getMany(companyId: string): Promise<User[]> {
-    return this.client.user.findMany({
+  async getMany(companyId: string): Promise<UserModel[]> {
+    const users = await this.client.user.findMany({
       where: {
         companies: {
           some: {
@@ -17,10 +20,12 @@ export class PrismaUserRepository implements UserRepository {
         },
       },
     });
+
+    return users.map(this.prismaToModel);
   }
 
-  async find(companyId: string, userId: string): AsyncMaybe<User> {
-    return this.client.user.findFirst({
+  async find(companyId: string, userId: string): AsyncMaybe<UserModel> {
+    const user = await this.client.user.findFirst({
       where: {
         id: userId,
         companies: {
@@ -30,10 +35,16 @@ export class PrismaUserRepository implements UserRepository {
         },
       },
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.prismaToModel(user);
   }
 
-  async findByEmail(companyId: string, email: string): AsyncMaybe<User> {
-    return this.client.user.findUnique({
+  async findByEmail(companyId: string, email: string): AsyncMaybe<UserModel> {
+    const user = await this.client.user.findUnique({
       where: {
         email,
         companies: {
@@ -43,6 +54,12 @@ export class PrismaUserRepository implements UserRepository {
         },
       },
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.prismaToModel(user);
   }
 
   async create(payload: UserCommand): Promise<void> {
@@ -89,5 +106,13 @@ export class PrismaUserRepository implements UserRepository {
         },
       },
     });
+  }
+
+  private prismaToModel(this: void, prisma: User): UserModel {
+    return {
+      ...prisma,
+      status: prisma.status as UserStatus,
+      type: prisma.type as UserType,
+    };
   }
 }
