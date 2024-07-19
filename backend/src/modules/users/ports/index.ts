@@ -6,6 +6,6 @@ interface UserPorts {
   repository: UserRepository;
 }
 
-export const userModule: UserPorts = {
+export const userPorts: UserPorts = {
   repository: new PrismaUserRepository(prisma),
 };
