@@ -30,3 +30,9 @@ This project is a roadmap on how to over-engineer a software application.
    - Architectural Patterns
      - Modular Monolith
      - Hexagonal
+       - Implementations for this architecture vary a lot
+       - My best explanation for this architecture is this:
+         1. Incoming Adapter (Controller): Receives requests from the outside and adapts them to the incoming port API.
+         2. Incoming Port (Use Case): Processes incoming data, checks for domain invariants (does business logic), and calls outgoing ports.
+         3. Outgoing Port (Repository, External service): Retrieves core/domain objects (is the interface of the outgoing adapter).
+         4. Outgoing Adapter (Concrete Repository): Adapts the data from the incoming port and sends requests to the outside world.
