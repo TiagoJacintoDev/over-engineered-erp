@@ -37,3 +37,18 @@ This project is a roadmap on how to over-engineer a software application.
          3. Outgoing Port (Repository, External service): Retrieves core/domain objects (is the interface of the outgoing adapter).
          4. Outgoing Adapter (Concrete Repository): Adapts the data from the incoming port and sends requests to the outside world.
      - [From Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/2b0e08377f318d524f1445d1698808901b7afbed) | [To Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/c8d7cb21110c1d8bcc93c29d83ad0b577e3ddbd3)
+5. Auth
+   - Token storage
+   - JWT
+   - OAuth
+6. Each user should have its own data
+   - Available options
+     - Multi-instance
+     - Multi-tenant
+     - Sharding
+       - Postgres
+         - [Citus Data](https://www.citusdata.com/)
+         - [Manual](https://pgdash.io/blog/postgres-11-sharding.html)
+     - Partitioning
+7. CI
+8. Testing
