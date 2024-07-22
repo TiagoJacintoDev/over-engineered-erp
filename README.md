@@ -37,32 +37,7 @@ This project is a roadmap on how to over-engineer a software application.
          3. Outgoing Port (Repository, External service): Retrieves core/domain objects (is the interface of the outgoing adapter).
          4. Outgoing Adapter (Concrete Repository): Adapts the data from the incoming port and sends requests to the outside world.
      - [From Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/2b0e08377f318d524f1445d1698808901b7afbed) | [To Commit](https://github.com/TiagoJacintoDev/over-engineered-erp/tree/1f3d5b127816e5299f34dd08d3dbb1eb81b2ac9b)
-5. Auth
-   - Token storage
-     - Available options
-       - Web Storage
-         - Advantages
-           - Limited to the specific domain
-         - Disadvantages
-           - Every request needs to send the authorization header token
-         - Open to
-           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
-       - Cookies
-         - Advantages
-           - Automatically sent to the server in each request (no need to define authorization header)
-         - Open to
-           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
-           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
-       - In Memory
-         - Advantages
-           - There is no way to access the token in the browser
-         - Disadvantages
-           - Every request needs to send the authorization header token
-         - Open to
-           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
-   - JWT
-   - OAuth
-6. Each user should have its own data
+5. Each user should have its own data
    - Available options
      - Multi-instance
      - Multi-tenant
@@ -71,5 +46,56 @@ This project is a roadmap on how to over-engineer a software application.
          - [Citus Data](https://www.citusdata.com/)
          - [Manual](https://pgdash.io/blog/postgres-11-sharding.html)
      - Partitioning
+6. Auth
+   - Token storage
+     - Storage Options
+       - Web Storage
+         - Local Storage
+         - Session Storage
+       - Cookies
+       - Frontend cache
+       - Backend cache
+     - Available strategies
+       - Web Storage
+         - Can only be accessed on the client-side
+         - Advantages
+           - Limited to the specific domain
+         - Disadvantages
+           - Less control over security
+           - Less flexibility to choose where the token can be accessed
+           - Every request needs to send the authorization header token
+         - Open to
+           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
+       - Global cookies
+         - Advantages
+           - Can be accessed on the client side (document.cookies) and the backend
+           - Automatically sent to the server in each request (no need to define authorization header)
+         - Open to
+           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
+           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
+         - Sub strategies
+           - Signed cookie
+       - Cookies cached in the backend
+         - Advantages
+           - No need to send the token in every request
+         - 
+       - Server-only cookies
+         - Advantages
+           - Can only be accessed in the backend
+           - Automatically sent to the server in each request (no need to define authorization header)
+         - Open to
+           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
+           - [XSS](https://owasp.org/www-community/attacks/xss/) attacks
+       - In Memory + Client-Side Refresh Token Storage
+         - Explanation
+           - If there is no token in memory the refresh token is sent to the backend to request a new token
+         - Advantages
+           - There is no way to access the token in the browser
+         - Disadvantages
+           - Every request needs to send the authorization header token
+         - Open to
+           - [CSRF](https://owasp.org/www-community/attacks/csrf) attacks
+   - JWT
+   - OAuth
 7. CI
 8. Testing
