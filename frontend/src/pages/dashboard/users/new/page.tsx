@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { type AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { axiosClient } from '../../../../shared/clients/axios';
 
@@ -12,19 +12,13 @@ type CreateUserFormValues = {
 };
 
 export default function CreateUser() {
-  const [searchParams] = useSearchParams();
   const navigateTo = useNavigate();
-
-  const companyId = searchParams.get('companyId')!;
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: CreateUserFormValues) => {
-      const response = await axiosClient.post<{ id: string }>(
-        `/companies/${companyId}/users`,
-        data,
-      );
+      const response = await axiosClient.post<{ id: string }>(`users`, data);
 
-      navigateTo(`/dashboard/users/${response.data.id}?companyId=${companyId}`);
+      navigateTo(`/dashboard/users/${response.data.id}`);
     },
     onError: (error: AxiosError<{ error: string }>) => {
       console.log(error);

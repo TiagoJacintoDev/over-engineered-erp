@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import ChooseCompany from './pages/choose-company/page.tsx';
 import Dashboard from './pages/dashboard/page.tsx';
 import EditUser from './pages/dashboard/users/[userId]/page.tsx';
 import CreateUser from './pages/dashboard/users/new/page.tsx';
@@ -20,10 +19,6 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
-  },
-  {
-    path: '/choose-company',
-    element: <ChooseCompany />,
   },
   {
     path: '/dashboard',

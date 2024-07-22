@@ -10,29 +10,16 @@ import { type UserRepository } from '../../ports/outgoing/user.repository';
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly client: PrismaClient) {}
 
-  async getMany(companyId: string): Promise<UserModel[]> {
-    const users = await this.client.user.findMany({
-      where: {
-        companies: {
-          some: {
-            id: companyId,
-          },
-        },
-      },
-    });
+  async getMany(): Promise<UserModel[]> {
+    const users = await this.client.user.findMany();
 
     return users.map(PrismaUserRepository.prismaToModel);
   }
 
-  async findById(companyId: string, userId: string): AsyncMaybe<UserModel> {
+  async findById(userId: string): AsyncMaybe<UserModel> {
     const user = await this.client.user.findFirst({
       where: {
         id: userId,
-        companies: {
-          some: {
-            id: companyId,
-          },
-        },
       },
     });
 
@@ -43,15 +30,10 @@ export class PrismaUserRepository implements UserRepository {
     return PrismaUserRepository.prismaToModel(user);
   }
 
-  async findByEmail(companyId: string, email: string): AsyncMaybe<UserModel> {
+  async findByEmail(email: string): AsyncMaybe<UserModel> {
     const user = await this.client.user.findUnique({
       where: {
         email,
-        companies: {
-          some: {
-            id: companyId,
-          },
-        },
       },
     });
 
@@ -68,11 +50,6 @@ export class PrismaUserRepository implements UserRepository {
         email: payload.email,
         firstName: payload.firstName,
         lastName: payload.lastName,
-        companies: {
-          connect: {
-            id: payload.companyId,
-          },
-        },
         password: payload.password,
         country: payload.country,
       },
@@ -83,11 +60,6 @@ export class PrismaUserRepository implements UserRepository {
     await this.client.user.update({
       where: {
         email: command.email,
-        companies: {
-          some: {
-            id: command.companyId,
-          },
-        },
       },
       data: {
         firstName: command.firstName,
@@ -99,15 +71,10 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async delete(companyId: string, userId: string): Promise<void> {
+  async delete(userId: string): Promise<void> {
     await this.client.user.delete({
       where: {
         id: userId,
-        companies: {
-          some: {
-            id: companyId,
-          },
-        },
       },
     });
   }

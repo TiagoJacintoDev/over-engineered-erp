@@ -15,9 +15,9 @@ export default function Login() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: LoginFormValues) => {
-      const response = await axiosClient.post<{ userId: string }>('/login', data);
+      const response = await axiosClient.post<{ userId: string }>('/auth/login', data);
 
-      navigateTo(`/choose-company?userId=${response.data.userId}`);
+      navigateTo(`/dashboard?userId=${response.data.userId}`);
     },
     onError: (error: AxiosError<{ error: string }>) => {
       alert(error.response?.data.error);

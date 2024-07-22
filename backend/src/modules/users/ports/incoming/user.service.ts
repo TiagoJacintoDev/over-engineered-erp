@@ -4,20 +4,20 @@ import { type UserRepository } from '../outgoing/user.repository';
 export class UserService {
   constructor(private readonly repository: UserRepository) {}
 
-  async getUsers(companyId: string) {
-    return this.repository.getMany(companyId);
+  async getUsers() {
+    return this.repository.getMany();
   }
 
-  async getUserByEmail(companyId: string, email: string) {
-    const user = await this.repository.findByEmail(companyId, email);
+  async getUserByEmail(email: string) {
+    const user = await this.repository.findByEmail(email);
 
     if (!user) throw new Error('User not found');
 
     return user;
   }
 
-  async getUserById(companyId: string, userId: string) {
-    const user = await this.repository.findById(companyId, userId);
+  async getUserById(userId: string) {
+    const user = await this.repository.findById(userId);
 
     if (!user) throw new Error('User not found');
 
@@ -25,7 +25,7 @@ export class UserService {
   }
 
   async createUser(command: UserCommand) {
-    const alreadyExistentUser = await this.repository.findByEmail(command.companyId, command.email);
+    const alreadyExistentUser = await this.repository.findByEmail(command.email);
 
     if (alreadyExistentUser) throw new Error('User already exists');
 
@@ -33,18 +33,18 @@ export class UserService {
   }
 
   async updateUser(command: UserCommand) {
-    const alreadyExistentUser = await this.repository.findByEmail(command.companyId, command.email);
+    const alreadyExistentUser = await this.repository.findByEmail(command.email);
 
     if (!alreadyExistentUser) throw new Error('User not found');
 
     await this.repository.update(command);
   }
 
-  async deleteUser(companyId: string, userId: string) {
-    const user = await this.repository.findById(companyId, userId);
+  async deleteUser(userId: string) {
+    const user = await this.repository.findById(userId);
 
     if (!user) throw new Error('User not found');
 
-    await this.repository.delete(companyId, userId);
+    await this.repository.delete(userId);
   }
 }

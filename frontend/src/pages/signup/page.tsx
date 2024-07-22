@@ -11,7 +11,6 @@ type SignupFormValues = {
   firstName: string;
   lastName: string;
   password: string;
-  companyName: string;
 };
 
 export default function Signup() {
@@ -19,9 +18,9 @@ export default function Signup() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: SignupFormValues) => {
-      const response = await axiosClient.post<{ companyId: string }>('/signup', data);
+      const response = await axiosClient.post<{ userId: string }>('/auth/signup', data);
 
-      navigateTo(`/dashboard?companyId=${response.data.companyId}`);
+      navigateTo(`/dashboard?userId=${response.data.userId}`);
     },
     onError: (error: AxiosError<{ error: string }>) => {
       alert(error.response?.data.error);
@@ -35,7 +34,6 @@ export default function Signup() {
       firstName: '',
       lastName: '',
       password: '',
-      companyName: '',
     },
     disabled: isPending,
   });
@@ -44,13 +42,6 @@ export default function Signup() {
     <div className="py-6 px-36">
       <h1 className="text-xl">Signup</h1>
       <form onSubmit={handleSubmit((data) => mutate(data))} className="flex flex-col gap-4 mt-5">
-        <label>Company Name</label>
-        <input
-          type="text"
-          className="border border-black rounded-lg h-9 pl-2.5"
-          {...register('companyName')}
-        />
-
         <label>First Name</label>
         <input
           type="text"

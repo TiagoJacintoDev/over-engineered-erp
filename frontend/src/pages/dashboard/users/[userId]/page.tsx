@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { type AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { axiosClient } from '../../../../shared/clients/axios';
 
@@ -13,15 +13,13 @@ type User = {
 
 export default function EditUser() {
   const params = useParams();
-  const [searchParams] = useSearchParams();
 
   const userId = params.userId!;
-  const companyId = searchParams.get('companyId')!;
 
   const { data, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const response = await axiosClient.get<User>(`companies/${companyId}/users/${userId}`);
+      const response = await axiosClient.get<User>(`users/${userId}`);
 
       return response.data;
     },
@@ -30,7 +28,7 @@ export default function EditUser() {
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>Failed to fetch user</div>;
 
-  return <EditUserForm companyId={companyId} userId={userId} user={data} />;
+  return <EditUserForm userId={userId} user={data} />;
 }
 
 type EditUserFormValues = {
@@ -39,25 +37,14 @@ type EditUserFormValues = {
   lastName: string;
 };
 
-function EditUserForm({
-  companyId,
-  userId,
-  user,
-}: {
-  companyId: string;
-  userId: string;
-  user: User;
-}) {
+function EditUserForm({ userId, user }: { userId: string; user: User }) {
   const navigateTo = useNavigate();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: EditUserFormValues) => {
-      const response = await axiosClient.put<{ id: string }>(
-        `/companies/${companyId}/users/${userId}`,
-        data,
-      );
+      const response = await axiosClient.put<{ id: string }>(`users/${userId}`, data);
 
-      navigateTo(`/dashboard/users/${response.data.id}?companyId=${companyId}`);
+      navigateTo(`/dashboard/users/${response.data.id}`);
     },
     onError: (error: AxiosError<{ error: string }>) => {
       console.log(error);

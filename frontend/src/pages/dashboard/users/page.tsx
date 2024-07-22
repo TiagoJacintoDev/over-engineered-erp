@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { queryClient } from '../../../main';
 import { axiosClient } from '../../../shared/clients/axios';
@@ -13,14 +13,10 @@ type User = {
 };
 
 export default function UsersList() {
-  const [searchParams] = useSearchParams();
-
-  const companyId = searchParams.get('companyId')!;
-
   const { data, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const response = await axiosClient.get<User[]>(`companies/${companyId}/users`);
+      const response = await axiosClient.get<User[]>('users');
 
       return response.data;
     },
@@ -29,13 +25,13 @@ export default function UsersList() {
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>Failed to fetch users</div>;
 
-  return <UsersTable companyId={companyId} users={data} />;
+  return <UsersTable users={data} />;
 }
 
-function UsersTable({ companyId, users }: { companyId: string; users: User[] }) {
+function UsersTable({ users }: { users: User[] }) {
   const { mutate: deleteUser, isPending: isDeletingUser } = useMutation({
     mutationFn: async (userId: string) => {
-      await axiosClient.delete(`companies/${companyId}/users/${userId}`);
+      await axiosClient.delete(`users/${userId}`);
     },
     onSuccess: () => {
       return queryClient.invalidateQueries({
@@ -46,10 +42,7 @@ function UsersTable({ companyId, users }: { companyId: string; users: User[] }) 
 
   return (
     <div className="p-7">
-      <Link
-        to={`/dashboard/users/new?companyId=${companyId}`}
-        className="bg-black text-white px-5 py-2.5 rounded-md"
-      >
+      <Link to="/dashboard/users/new" className="bg-black text-white px-5 py-2.5 rounded-md">
         Create new user
       </Link>
 
@@ -66,7 +59,7 @@ function UsersTable({ companyId, users }: { companyId: string; users: User[] }) 
             return (
               <div className="flex w-full">
                 <tr key={user.id} className="text-center flex">
-                  <Link to={`/dashboard/users/${user.id}?companyId=${companyId}`} className="flex">
+                  <Link to={`/dashboard/users/${user.id}`} className="flex">
                     <td>{`${user.firstName} ${user.lastName}`}</td>
                     <td>{user.status}</td>
                     <td>{user.type}</td>

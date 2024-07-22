@@ -29,13 +29,6 @@ model User {
   email     String     @unique
   status    UserStatus @default(ACTIVE)
   type      UserType   @default(USER)
-  companies Company[]
 
   @@map("Users")
-}
-
-model Company {
-  id    String @id @default(uuid())
-  name  String @unique
-  users User[]
 }

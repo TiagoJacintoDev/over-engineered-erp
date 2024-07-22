@@ -11,7 +11,7 @@ export class UserController extends Controller {
 
   async getUsers(req: express.Request, res: express.Response) {
     await this.execute(req, res, async (req, res) => {
-      const users = await this.service.getUsers(req.params.companyId);
+      const users = await this.service.getUsers();
 
       res.status(200).json(
         users.map((user) => ({
@@ -29,7 +29,7 @@ export class UserController extends Controller {
 
   async getUserById(req: express.Request, res: express.Response) {
     await this.execute(req, res, async (req, res) => {
-      const user = await this.service.getUserById(req.params.companyId, req.params.userId);
+      const user = await this.service.getUserById(req.params.userId);
 
       res.status(200).json({
         id: user.id,
@@ -50,9 +50,8 @@ export class UserController extends Controller {
           email: z.string().email(),
           firstName: z.string(),
           lastName: z.string(),
-          companyId: z.string(),
         })
-        .parse({ ...req.body, companyId: req.params.companyId });
+        .parse(req.body);
 
       await this.service.createUser(data);
 
@@ -67,9 +66,8 @@ export class UserController extends Controller {
           email: z.string().email(),
           firstName: z.string(),
           lastName: z.string(),
-          companyId: z.string(),
         })
-        .parse({ ...req.body, companyId: req.params.companyId });
+        .parse(req.body);
 
       await this.service.updateUser(data);
 
@@ -79,7 +77,7 @@ export class UserController extends Controller {
 
   async deleteUser(req: express.Request, res: express.Response) {
     await this.execute(req, res, async () => {
-      await this.service.deleteUser(req.params.companyId, req.params.userId);
+      await this.service.deleteUser(req.params.userId);
 
       res.status(204).send();
     });

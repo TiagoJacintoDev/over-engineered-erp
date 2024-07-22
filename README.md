@@ -46,6 +46,8 @@ This project is a roadmap on how to over-engineer a software application.
          - [Citus Data](https://www.citusdata.com/)
          - [Manual](https://pgdash.io/blog/postgres-11-sharding.html)
      - Partitioning
+   - Available strategies
+     1. Single Tenant
 6. Auth
    - Token storage
      - Storage Options
